@@ -36,7 +36,7 @@ class DisplayScript {
 
         if (type == 'heading') {
             var sceneCount = document.getElementsByClassName('heading').length;
-            content = 'SC' + parseInt(parseInt(sceneCount) + 1) + '. - ' + content;
+            content = 'SC ' + parseInt(parseInt(sceneCount) + 1) + ' — ' + content;
         }
 
         // Add block to latest page

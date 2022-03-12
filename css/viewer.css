@@ -9,6 +9,10 @@
     font-family: 'Courier', Courier, monospace, sans-serif;
     font-size: 12pt;
     line-height: 1.09;
+    /*    font-family: 'DejaVu Sans', monospace, sans-serif;
+    font-family: 'Linux Biolinum G', monospace, sans-serif;
+    font-size: 13pt;
+    line-height: 1.2; */
     font-weight: normal;
     text-align: left;
 }
@@ -50,8 +54,10 @@ span {
 .heading {
     margin-left: calc(1.5 * 2.54cm);
     margin-right: calc(1 * 2.54cm);
+    margin-top: 2.5em;
     width: calc(6 * 2.54cm);
     text-transform: uppercase;
+    font-weight: 800;
 }
 .action {
     margin-left: calc(1.5 * 2.54cm);

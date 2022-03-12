@@ -79,10 +79,9 @@ class FountainParser {
             if (this.isSection(line) || this.isSynopsis(line)) { continue; } // Skip Section and Synopsis
 
             if (this.isHeading(line)) {
-                if (line[0] == '.') { line = line.slice(1); } // Remove leading dot
-                this.view.addBlock('heading', this.escape(line));
-                var location = line.split('-')[0].trim();
-                this.addLocation(location);
+                var o = this.parseHeading(line);
+                this.view.addBlock('heading', this.escape(o['line']));
+                this.addLocation(o['location']);
             }
 
             else if (this.isTitlePage(line)) {
@@ -135,17 +134,25 @@ class FountainParser {
     }
 
     isHeading(str) {
-        if (str[0] == '!')  { return false; }
-        if (str.length >= 2 && str[0] == '.' && str[1] != '.') { return true; } // Starting with a period followd by another character
-        return  str.slice(0, 4).toUpperCase() == 'INT.' ||
-                str.slice(0, 4).toUpperCase() == 'INT ' ||
-                str.slice(0, 7).toUpperCase() == 'INT/EXT' ||
-                str.slice(0, 8).toUpperCase() == 'INT./EXT' ||
-                str.slice(0, 4).toUpperCase() == 'EXT.' ||
-                str.slice(0, 4).toUpperCase() == 'EXT ' ||
-                str.slice(0, 4).toUpperCase() == 'EST.' ||
-                str.slice(0, 4).toUpperCase() == 'EST ' ||
-                str.slice(0, 3).toUpperCase() == 'I/E'; // Case insensitive chack
+        return /^(\.|int|ext|est|i\/e).+$/i.test(str);
+    }
+
+    parseHeading(line) {
+        var obj = [];
+        const found = line.match(/^(int\.?\s+|int\.?\/ext\.?\s+|ext\.?\/int\.?\s+|i\/e\s+|ext\.?\s+|\.\s*)(.*)$/i);
+        obj['INT'] = found[1].toLowerCase().includes('i');
+        obj['EXT'] = found[1].toLowerCase().includes('e');
+        const res = found[2].split(' - ');
+        obj['location'] = res.shift().trim();
+        obj['others'] = res.map(e => e.trim());
+        obj['line'] = '';
+        obj['line'] += obj['INT'] ? 'INT' : '';
+        obj['line'] += obj['INT'] && obj['EXT'] ? '/' : '';
+        obj['line'] += obj['EXT'] ? 'EXT' : '';
+        obj['line'] += '.\u2003' + obj['location'];
+        obj['line'] += obj['others'].length > 0 ? ' – ' : '';
+        obj['line'] += obj['others'].join(' – ');
+        return obj;
     }
 
     isDialog(str) {
