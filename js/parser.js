@@ -93,22 +93,11 @@ class FountainParser {
                 this.view.addBlock('center', this.emphasis(this.centerText(this.escape(line))));
             }
 
-            else if (this.isDualDialog(line)) {
-                if (line[0] == '@') { line = line.slice(1); } // Remove leading @
-                var parts = this.clearNote(line).split('\n');
-                this.view.addBlock('character-cue', parts[0].replace('^', '').trim());
-                var dialog = parts.slice(1);
-                this.view.addBlock('dual-dialog', dialog.map(l => this.emphasis(this.escape(l))).join('<br />').trim());
-                this.addCharacter(parts[0].replace('^', '').trim());
-            }
-
             else if (this.isDialog(line)) {
-                if (line[0] == '@') { line = line.slice(1); } // Remove leading @
-                var parts = this.clearNote(line).split('\n');
-                this.view.addBlock('character-cue', parts[0]);
-                var dialog = parts.slice(1);
-                this.view.addBlock('dialog', dialog.map(l => this.emphasis(this.escape(l))).join('<br />').trim());
-                this.addCharacter(parts[0]);
+                var o = this.parseDialog(this.clearNote(line));
+                this.view.addBlock('character-cue', o['character-cue']);
+                this.view.addBlock(o['block'], o['dialog'].map(l => this.emphasis(this.escape(l))).join('<br />').trim());
+                this.addCharacter(o['character']);
             }
 
             else if (this.isTransition(line)) {
@@ -125,12 +114,6 @@ class FountainParser {
         }
 
         updateStats();
-
-    }
-
-    isCharacter(str) {
-        if (str[0] == '!')  { return false; }
-        return str == str.toUpperCase();
     }
 
     isHeading(str) {
@@ -160,18 +143,22 @@ class FountainParser {
         if (
             (parts.length >= 2)
             &&
-            (parts[0][0] == '@' || parts[0].toUpperCase() == parts[0]) // Character name forced with @ or in upper case
-            &&
-            (/[a-zA-Z]/.test(parts[0])) // Character name must include at least one letter
+            (/^(@\p{L}\w*|[\p{Lu}\d_]+)(\s*\([^)]*\))?\s*\^?$/u.test(parts[0]))  // Character name forced with @ or in upper case
             &&
             (parts[1].length > 0)
          ) { return true; }
         return false;
     }
 
-    isDualDialog(str) {
-        var parts = str.toString().split(/\r?\n/);
-        return this.isDialog(str) && parts.length >= 2 && parts[0].slice(-1) == '^'; // Last character on the Character element is a carret
+    parseDialog(line) {
+      var obj = [];
+      var parts = line.split('\n');
+      const found = parts[0].match(/^@?([^\n]+?)\s*(\([^\n]+\))?(\^)?$/i);
+      obj['character'] = found[1];
+      obj['character-cue'] = found[1] + (found[2] ? ' ' + found[2] : '');
+      obj['dialog'] = parts.slice(1);
+      obj['block'] =  found[3] ? 'dual-dialog' : 'dialog';
+      return obj;
     }
 
     isTransition(str) {
