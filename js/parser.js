@@ -149,7 +149,7 @@ class FountainParser {
         obj['line'] += obj['INT'] ? 'INT' : '';
         obj['line'] += obj['INT'] && obj['EXT'] ? '/' : '';
         obj['line'] += obj['EXT'] ? 'EXT' : '';
-        obj['line'] += '.\u2003' + obj['location'];
+        obj['line'] += '.\u2002' + obj['location'];
         obj['line'] += obj['others'].length > 0 ? ' – ' : '';
         obj['line'] += obj['others'].join(' – ');
         return obj;
