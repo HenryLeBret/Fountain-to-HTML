@@ -39,7 +39,7 @@
             [ "EXT/INT  Espace/forêt/Appartement de HC - Nuit",
                 { INT: true, EXT: true, location: ["Espace", "forêt", "Appartement de HC"], others: ["Nuit"], line: "INT/EXT. Espace/forêt/Appartement de HC – Nuit" } ],
             [ "EXT. STUDIO DE TOURNAGE - JOUR",
-                { INT: true, EXT: false, location: ["STUDIO DE TOURNAGE"], others: ["JOUR"], line: "EXT. STUDIO DE TOURNAGE – JOUR"} ],
+                { INT: false, EXT: true, location: ["STUDIO DE TOURNAGE"], others: ["JOUR"], line: "EXT. STUDIO DE TOURNAGE – JOUR"} ],
             [ ".Générique de fin",
                 { INT: false, EXT: false, location: ["Générique de fin"], others: [], line: "Générique de fin"} ]
         ];
@@ -58,8 +58,10 @@
 
         test.each( "parseHeading", HEADING, ( assert, [data, expected] ) => {
             var actual = parser.parseHeading(data);
-            assert.equal(actual.line, expected.line, `${actual.line} is not correctly formated`);
-            assert.deepEqual(actual.location, expected.location, `location of ${actual.line} is not correct`);
+            assert.equal(actual.line, expected.line, `${actual.line} is correctly formated`);
+            assert.equal(actual.INT, expected.INT, `${actual.INT} is correct`);
+            assert.equal(actual.EXT, expected.EXT, `${actual.EXT} is correct`);
+            assert.deepEqual(actual.location, expected.location, `location of ${actual.line} is correct`);
         });
     });
   </script>
