@@ -130,17 +130,17 @@ class FountainParser {
 
     parseHeading(line) {
         var obj = [];
-        const found = line.match(/^(int\.?\s+|int\.?\/ext\.?\s+|ext\.?\/int\.?\s+|i\/e\s+|ext\.?\s+|\.\s*)(.*)$/i);
+        const found = line.match(/^(int\.?\s+|int\.?\/ext\.?\s+|ext\.?\/int\.?\s+|i\/e\s+|est\.?\s+|ext\.?\s+|\.\s*)(.*)$/i);
         obj['INT'] = found[1].toLowerCase().includes('i');
         obj['EXT'] = found[1].toLowerCase().includes('e');
         const res = found[2].split(' - ');
-        obj['location'] = res.shift().trim();
+        obj['location'] = res.shift().split('/').map(e => e.trim());
         obj['others'] = res.map(e => e.trim());
         obj['line'] = '';
         obj['line'] += obj['INT'] ? 'INT' : '';
         obj['line'] += obj['INT'] && obj['EXT'] ? '/' : '';
         obj['line'] += obj['EXT'] ? 'EXT' : '';
-        obj['line'] += (obj['line'].length == 0 ? '' : '.\u2002') + obj['location'];
+        obj['line'] += (obj['line'].length == 0 ? '' : '.\u2002') + obj['location'].join('/');
         obj['line'] += obj['others'].length > 0 ? ' – ' : '';
         obj['line'] += obj['others'].join(' – ');
         return obj;
