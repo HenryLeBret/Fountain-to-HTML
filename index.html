@@ -17,7 +17,8 @@
             <nav>
                 <section>
                     <span id="location-count" title="The amount of different locations used in this script.">0</span> locations,
-                    <span id="dialog-count" title="The amount of people who have dialog in this script.">0</span> speakers,
+                    <span onclick="toggleVisibility('caracter-stats');">
+                        <span id="dialog-count" title="The amount of people who have dialog in this script.">0</span> speakers,</span>
                     <span id="word-count" title="The amount of words in the script.">0</span> words,
                     <span id="scene-count" title="The amount of scenes in the script.">0</span> scenes,
                     <span id="page-count" title="The amount of pages, including the title page.">0</span> pages
@@ -32,6 +33,12 @@
             </nav>
         </header>
 
+        <div id="stats">
+            <ul id="caracter-stats" style="display: none;" >
+            </ul>
+            <ul id="location-stats" style="display: none;" >
+            </ul>
+        </div>
         <div id="editor">
             <textarea id="fountain" placeholder="Start writing your screenplay in Fountain here..."></textarea>
         </div>
@@ -51,7 +58,7 @@
         <script type="text/javascript" src="js/FileSaver.js"></script><!-- github.com/eligrey/FileSaver.js -->
         <script type="text/javascript">
 
-            var d = new DisplayScript();
+            var d = new DisplayScript('location-stats', 'caracter-stats');
             var p = new FountainParser('fountain', d);
             var sp = new Screenplay('fountain', p, d);
 
@@ -133,7 +140,7 @@
                 document.getElementById('page-count').innerText = document.getElementById('scenario').children.length;
                 document.getElementById('scene-count').innerText = document.getElementsByClassName('heading').length;
                 document.getElementById('word-count').innerText = document.getElementById('fountain').value.trim().split(/\s+/).length;
-                document.getElementById('dialog-count').innerText = p.characters.length;
+                document.getElementById('dialog-count').innerText = Object.keys(p.characters).length;
                 document.getElementById('location-count').innerText = p.locations.length;
             }
 
@@ -147,6 +154,10 @@
                 }
             }
 
+            function toggleVisibility(id) {
+                d.toggleVisibility(id);
+            }
+            
             document.querySelector('header nav').addEventListener('click', function() {
                 toggleMenu();
             });

@@ -1,6 +1,6 @@
 class FountainParser {
 
-    characters = [];
+    characters = {};
     locations = [];
 
     constructor(domId, display) {
@@ -56,9 +56,14 @@ class FountainParser {
         arr.push(str);
     }
 
-    addCharacter(name) {
-        name = name.replace(/\s*\([^)]*\)$/, '');
-        this.addToArrayUnique(this.characters, name);
+    addCharacter(name, lines, words) {
+        if (this.characters.hasOwnProperty(name)) {
+              this.characters[name].dialogs++;
+              this.characters[name].lines += lines;
+              this.characters[name].words += words;
+          } else {
+              this.characters[name] = { dialogs: 1, lines: lines, words: words };
+          }
     }
 
     addLocation(location) {
@@ -67,7 +72,7 @@ class FountainParser {
 
     parseFountain() {
 
-        this.characters = []; // Clear characters
+        this.characters = {}; // Clear characters
 
         var lines = this.clearBoneyard(this.contents.value).split(/\r?\n\r?\n/); // Get content
         if (lines.length <= 1) { return; }
@@ -90,14 +95,16 @@ class FountainParser {
             }
 
             else if (this.isCentered(line)) {
-                this.view.addBlock('center', this.emphasis(this.centerText(this.escape(line))));
+                this.view.addBlock('center', this.emphasis(this.escape(this.centerText(line))));
             }
 
             else if (this.isDialog(line)) {
                 var o = this.parseDialog(this.clearNote(line));
                 this.view.addBlock('character-cue', o['character-cue']);
                 this.view.addBlock(o['block'], o['dialog'].map(l => this.emphasis(this.escape(l))).join('<br />').trim());
-                this.addCharacter(o['character']);
+                var trueDialog = o['dialog'].filter(l => ! l.trim().match( /^\(.*\)$/) );
+                var words = trueDialog.join(' ').split(/[^\p{L}\p{N}]+/u);
+                this.addCharacter(o['character'], trueDialog.length, words.length);
             }
 
             else if (this.isTransition(line)) {
@@ -114,6 +121,7 @@ class FountainParser {
         }
 
         updateStats();
+        this.view.createStatsSection(this.locations, this.characters);
     }
 
     isHeading(str) {
@@ -132,7 +140,7 @@ class FountainParser {
         obj['line'] += obj['INT'] ? 'INT' : '';
         obj['line'] += obj['INT'] && obj['EXT'] ? '/' : '';
         obj['line'] += obj['EXT'] ? 'EXT' : '';
-        obj['line'] += '.\u2002' + obj['location'];
+        obj['line'] += (obj['line'].length == 0 ? '' : '.\u2002') + obj['location'];
         obj['line'] += obj['others'].length > 0 ? ' – ' : '';
         obj['line'] += obj['others'].join(' – ');
         return obj;
@@ -151,14 +159,14 @@ class FountainParser {
     }
 
     parseDialog(line) {
-      var obj = [];
-      var parts = line.split('\n');
-      const found = parts[0].match(/^@?([^\n]+?)\s*(\([^\n]+\))?(\^)?$/i);
-      obj['character'] = found[1];
-      obj['character-cue'] = found[1] + (found[2] ? ' ' + found[2] : '');
-      obj['dialog'] = parts.slice(1);
-      obj['block'] =  found[3] ? 'dual-dialog' : 'dialog';
-      return obj;
+        var obj = [];
+        var parts = line.split('\n');
+        const found = parts[0].match(/^@?([^\n]+?)\s*(\([^\n]+\))?(\^)?$/i);
+        obj['character'] = found[1];
+        obj['character-cue'] = found[1] + (found[2] ? ' ' + found[2] : '');
+        obj['dialog'] = parts.slice(1);
+        obj['block'] =  found[3] ? 'dual-dialog' : 'dialog';
+        return obj;
     }
 
     isTransition(str) {
@@ -183,9 +191,7 @@ class FountainParser {
     }
 
     centerText(str) {
-        str = str.replace(/>[^\<]*</g, function(s) { // Center
-            return '<span>' + s.slice(1, -1).trim() + '</span>';
-        });
+        str = str.replace(/^\s*>\s*(.+)\s*<\s*$/g, '$1'); // Center
         return str;
     }
 

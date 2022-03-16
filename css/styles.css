@@ -61,6 +61,18 @@ footer a {
     text-decoration: underline;
     text-decoration-style: dotted;
 }
+#stats {
+  background-color: lightgrey;
+}
+#stats li {
+  padding-left: 20px;
+  padding-top: 10px;
+  padding-bottom: 0px;
+  display: list-item;
+}
+#stats li:last-child {
+  padding-bottom: 10px;
+}
 #editor {
     height: calc(100% - 70px);
     overflow: hidden;
