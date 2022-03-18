@@ -22,20 +22,20 @@
               { INT: false, EXT: false, location: ["SNIPER SCOPE POV"], others: [], line: "SNIPER SCOPE POV" } ],
             [ "ext. brick's pool - day",
                 { INT: false, EXT: true, location: ["brick's pool"], others: ["day"], line: "EXT. brick's pool – day" } ],
-            [ "INT. HOUSE - DAY #1#    ",
-                { INT: true, EXT: false, location: ["HOUSE"], others: ["DAY"], line: "INT. HOUSE – DAY #1#" } ],
+            [ "INT. HOUSE - DAY    #1#    ",
+                { INT: true, EXT: false, location: ["HOUSE"], others: ["DAY"], line: "INT. HOUSE – DAY #1#", sceneNumber: "1" } ],
             [ "Ext. HOUSE - DAY #1A#",
-                { INT: false, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "EXT. HOUSE – DAY #1A#" } ],
+                { INT: false, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "EXT. HOUSE – DAY #1A#", sceneNumber: "1A" } ],
             [ "EST. HOUSE - DAY #1a#",
-                { INT: false, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "EXT. HOUSE – DAY #1a#"} ],
+                { INT: false, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "EXT. HOUSE – DAY #1a#", sceneNumber: "1a" } ],
             [ "INT./EXT HOUSE - DAY #A1#",
-                { INT: true, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "INT/EXT. HOUSE – DAY #A1#"} ],
+                { INT: true, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "INT/EXT. HOUSE – DAY #A1#", sceneNumber: "A1" } ],
             [ "INT/EXT HOUSE - DAY #I-1-A#",
-                { INT: true, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "INT/EXT. HOUSE – DAY #I-1-A#" } ],
+                { INT: true, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "INT/EXT. HOUSE – DAY #I-1-A#", sceneNumber: "I-1-A" } ],
             [ "I/E HOUSE  -   DAY #1.#",
-                { INT: true, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "INT/EXT. HOUSE – DAY #1.#" } ],
+                { INT: true, EXT: true, location: ["HOUSE"], others: ["DAY"], line: "INT/EXT. HOUSE – DAY #1.#", sceneNumber: "1." } ],
             [ "INT. HOUSE - DAY - FLASHBACK (1944) #110A#    ",
-                { INT: true, EXT: false, location: ["HOUSE"], others: ["DAY", "FLASHBACK (1944)"], line: "INT. HOUSE – DAY – FLASHBACK (1944) #110A#" } ],
+                { INT: true, EXT: false, location: ["HOUSE"], others: ["DAY", "FLASHBACK (1944)"], line: "INT. HOUSE – DAY – FLASHBACK (1944) #110A#", sceneNumber: "110A" } ],
             [ "EXT/INT  Espace/forêt/Appartement de HC - Nuit",
                 { INT: true, EXT: true, location: ["Espace", "forêt", "Appartement de HC"], others: ["Nuit"], line: "INT/EXT. Espace/forêt/Appartement de HC – Nuit" } ],
             [ "EXT. STUDIO DE TOURNAGE - JOUR",
@@ -115,6 +115,8 @@
             assert.equal(actual.INT, expected.INT, `INT ${actual.INT} is correct`);
             assert.equal(actual.EXT, expected.EXT, `EXT ${actual.EXT} is correct`);
             assert.deepEqual(actual.location, expected.location, `location of ${actual.line} is correct`);
+            assert.deepEqual(actual.others, expected.others, `others of ${actual.line} is correct`);
+            assert.equal(actual.sceneNumber, expected.sceneNumber, `${actual.sceneNumber} is sceneNumber`);
         });
 
         test.each( "isDialog", DIALOG, ( assert, [data] ) => {
