@@ -3,6 +3,7 @@ class FountainParser {
     static HEADING_RE = /^(int\.?\s+|int\.?\/ext\.?\s+|ext\.?\/int\.?\s+|i\/e\s+|est\.?\s+|ext\.?\s+|\.\s*)(.*?)\s*(?:#([\w\d\.\-]+)#)?\s*$/i;
     // Character name forced with @ or in upper case
     static DIALOG_RE = /^\s*(?:@(.*?\p{Ll}.*?)|([\p{Lu}\d_\s]+))(\s*\([^)]*\))?\s*(\^)?$/u;
+    static TRANSITION_RE = /(?:^\s*>\s*(.+)\s*(?<!<)$)|(?:^(?!\.)\s*([^\p{Ll}]*TO:))$/u;
 
     characters = {};
     locations = [];
@@ -111,7 +112,7 @@ class FountainParser {
             }
 
             else if (this.isTransition(line)) {
-                if (line[0] == '>') { line = line.slice(1).trim(); }
+                line = parseTransition(line);
                 this.view.addBlock('transition', line);
             }
 
@@ -168,7 +169,12 @@ class FountainParser {
     }
 
     isTransition(str) {
-        return (str[0] == '>' && str.slice(-1) != '<') || (str.toUpperCase() == str && str.slice(-3) == 'TO:'); // In uppercase and ending with 'TO:' or beginning with '>'
+        return FountainParser.TRANSITION_RE.test(str);
+    }
+
+    parseTransition(str) {
+        const found = str.match(FountainParser.TRANSITION_RE);
+        return found[1] ? found[1] : found[2];
     }
 
     isSynopsis(str) {

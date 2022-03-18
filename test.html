@@ -93,10 +93,18 @@
             //
         ];
 
+        let TRANSITION = [
+            [ "CUT TO:", "CUT TO:" ],
+            [ "     CUT TO:", "CUT TO:" ],
+            [ "> Burn to White.", "Burn to White." ],
+        ];
+
+
         hooks.beforeEach( () => {
             parser = new FountainParser(undefined, undefined);
         });
 
+// =============== HEADING ====================================================
         test.each( "isHeading", HEADING, ( assert, [data] ) => {
             assert.true(parser.isHeading(data), `${data} is Heading`);
         });
@@ -119,6 +127,7 @@
             assert.equal(actual.sceneNumber, expected.sceneNumber, `${actual.sceneNumber} is sceneNumber`);
         });
 
+        // =============== DIALOG ====================================================
         test.each( "isDialog", DIALOG, ( assert, [data] ) => {
             assert.true(parser.isDialog(data), `${data} is Heading`);
         });
@@ -137,6 +146,21 @@
             assert.equal(actual['character-cue'], expected['character-cue'], `${actual['character-cue']} is correct`);
             assert.deepEqual(actual.dialog, expected.dialog, `${actual.dialog} is correct`);
             assert.equal(actual.block, expected.block, `${actual.block} is correct`);
+        });
+
+// =============== TRANSITION =================================================
+        test.each( "isTransition", TRANSITION, ( assert, [data] ) => {
+            assert.true(parser.isTransition(data), `${data} is Transition`);
+        });
+
+        test( "! isTransition", ( assert ) => {
+            assert.false(parser.isTransition("CUT TO: "), '"CUT TO: " is not Transition');
+            assert.false(parser.isTransition(".CUT TO:"), '".CUT TO:" is not Transition');
+        });
+
+        test.each( "parseTransition", TRANSITION, ( assert, [data, expected] ) => {
+            var actual = parser.parseTransition(data);
+            assert.equal(actual, expected, `${data} is correctly formated`);
         });
 
     });
