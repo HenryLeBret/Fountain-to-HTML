@@ -1,5 +1,9 @@
 class FountainParser {
 
+    static HEADING_RE = /^(int\.?\s+|int\.?\/ext\.?\s+|ext\.?\/int\.?\s+|i\/e\s+|est\.?\s+|ext\.?\s+|\.\s*)(.*)$/i;
+    // Character name forced with @ or in upper case
+    static DIALOG_RE = /^\s*(?:@(.*?\p{Ll}.*?)|([\p{Lu}\d_\s]+))(\s*\([^)]*\))?\s*(\^)?$/u;
+
     characters = {};
     locations = [];
 
@@ -45,7 +49,6 @@ class FountainParser {
         }
 
         return obj;
-
     }
 
     addToArrayUnique(arr, str) {
@@ -125,12 +128,12 @@ class FountainParser {
     }
 
     isHeading(str) {
-        return /^(\.|int|ext|est|i\/e).+$/i.test(str);
+        return FountainParser.HEADING_RE.test(str);
     }
 
     parseHeading(line) {
         var obj = [];
-        const found = line.match(/^(int\.?\s+|int\.?\/ext\.?\s+|ext\.?\/int\.?\s+|i\/e\s+|est\.?\s+|ext\.?\s+|\.\s*)(.*)$/i);
+        const found = line.match(FountainParser.HEADING_RE);
         obj['INT'] = found[1].toLowerCase().includes('i');
         obj['EXT'] = found[1].toLowerCase().includes('e');
         const res = found[2].split(' - ');
@@ -147,25 +150,18 @@ class FountainParser {
     }
 
     isDialog(str) {
-        var parts = str.toString().split(/\r?\n/);
-        if (
-            (parts.length >= 2)
-            &&
-            (/^(@\p{L}\w*|[\p{Lu}\d_]+)(\s*\([^)]*\))?\s*\^?$/u.test(parts[0]))  // Character name forced with @ or in upper case
-            &&
-            (parts[1].length > 0)
-         ) { return true; }
-        return false;
+        var parts = str.split(/\r?\n/);
+        return (parts.length >= 2) && (FountainParser.DIALOG_RE.test(parts[0]));
     }
 
     parseDialog(line) {
         var obj = [];
         var parts = line.split('\n');
-        const found = parts[0].match(/^@?([^\n]+?)\s*(\([^\n]+\))?(\^)?$/i);
-        obj['character'] = found[1];
-        obj['character-cue'] = found[1] + (found[2] ? ' ' + found[2] : '');
-        obj['dialog'] = parts.slice(1);
-        obj['block'] =  found[3] ? 'dual-dialog' : 'dialog';
+        const found = parts[0].match(FountainParser.DIALOG_RE);
+        obj['character'] = found[1] ? found[1].trim() : found[2].trim();
+        obj['character-cue'] = obj['character'] + (found[3] ? ' ' + found[3] : '');
+        obj['dialog'] = parts.slice(1).map(e => e.trim()).filter(e => e.length > 0);
+        obj['block'] =  found[4] ? 'dual-dialog' : 'dialog';
         return obj;
     }
 
