@@ -27,7 +27,7 @@ class DisplayScript {
         document.getElementById('scenario').innerHTML = '';
         this.location_stats.innerHTML = '';
         this.character_stats.innerHTML = '';
-        this.createTitlePage('Title page', 'Written by', 'You', '', ''); // There must be an empty page
+        this.createTitlePage(['Title page'], ['Written by'], ['You'], [''], ['']); // There must be an empty page
     }
 
     /**
@@ -51,7 +51,7 @@ class DisplayScript {
         // Add block to latest page
         var pages = document.getElementById('scenario').children;
         if (pages.length < 1) {
-            this.createTitlePage('Untitled Screenplay', 'Written by', 'You', '', ''); // There must be an empty page
+            this.createTitlePage(['Untitled Screenplay'], ['Written by'], ['You'], [''], ['']); // There must be an empty page
         }
 
         var lastPage = pages[pages.length - 1];
@@ -114,14 +114,14 @@ class DisplayScript {
 
     createTitlePage(title, credit, author, date, contact) {
         title = (title === undefined) ? 'The title of your script' : title;
-        credit = (credit === undefined) ? 'Written by' : credit;
-        author = (author === undefined) ? 'Written by' : author;
-        date = (date === undefined) ? 'today' : date;
-        contact = (contact === undefined) ? '' : contact;
-        updateTitle(title);
+        credit = (credit === undefined) ? 'Written by' : credit[0];
+        author = (author === undefined) ? 'Written by' : author[0];
+        date = (date === undefined) ? 'today' : date[0];
+        contact = (contact === undefined) ? '' : contact.join('<br/>');
+        updateTitle(title.join(' '));
         var titlePage = '<li class="fly-page paper a4-portrait" id="1">';
         titlePage += '<span class="lines-25"></span>';
-        titlePage += '<span class="script-title" title="The title of this script.">'+title+'</span>';
+        titlePage += '<span class="script-title" title="The title of this script.">'+title.join('<br/>')+'</span>';
         titlePage += '<span class="lines-2"></span>';
         titlePage += '<span class="credit">'+credit+'</span>';
         titlePage += '<span class="author" title="The full name of the writer of this script.">'+author+'</span>';

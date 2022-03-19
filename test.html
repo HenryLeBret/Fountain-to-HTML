@@ -104,6 +104,58 @@
             parser = new FountainParser(undefined, undefined);
         });
 
+// =============== TITLE PAGE =================================================
+
+        test( "isTitlePage", (assert) => {
+            var titlePage = "Title:\n    _**BRICK & STEEL**_\n    _**FULL RETIRED**_\nCredit: Written by\n"
+                            + "Author: Stu Maschwitz\nSource: Story by KTM\nDraft date: 1/20/2012\n"
+                            + "Contact:\n    Next Level Productions\n    1588 Mission Dr.\n    Solvang, CA 93463\n";
+            assert.true(parser.isTitlePage(titlePage), 'It’s a title page');
+            titlePage = "Draft date: 6/23/2012";
+            assert.true(parser.isTitlePage(titlePage), 'It’s a title page');
+            titlePage = "Title: Présentation de la chaîne\nCredit: Written by\nAuthor: JCG\nSource: Story by KTM\nDraft date: 2022-02-22";
+            assert.true(parser.isTitlePage(titlePage), 'It’s a title page');
+            assert.true(parser.isTitlePage("    " + titlePage), 'It’s a title page');
+            assert.true(parser.isTitlePage("Title  : Présentation"), 'It’s a title page');
+            assert.false(parser.isTitlePage("Title Présentation"), 'It’s not a title page');
+        });
+
+        test( "parseTitlePage", (assert) => {
+            var titlePage = "Title:\n    _**BRICK & STEEL**_\n    _**FULL RETIRED**_\nCredit: Written by\n"
+                            + "Author: Stu Maschwitz\nSource: Story by KTM\nDraft date: 1/20/2012\n"
+                            + "Contact:\n    Next Level Productions\n    1588 Mission Dr.\n    Solvang, CA 93463\n";
+            var o = parser.parseTitlePage(titlePage);
+            assert.propEqual(o, {
+                title: [ "_**BRICK & STEEL**_", "_**FULL RETIRED**_"],
+                credit: ["Written by"],
+                author: ["Stu Maschwitz"],
+                source: ["Story by KTM"],
+                draft_date: ["1/20/2012"],
+                contact: [ "Next Level Productions", "1588 Mission Dr.", "Solvang, CA 93463"]
+            });
+
+            titlePage = "Draft date: 6/23/2012";
+            assert.propEqual(parser.parseTitlePage(titlePage), { draft_date: ["6/23/2012"] });
+
+            titlePage = "Title: Présentation de la chaîne\nCredit: Written by\nAuthor: JCG\nSource: Story by KTM\nDraft date: 2022-02-22";
+            assert.propEqual(parser.parseTitlePage(titlePage), {
+                title: [ "Présentation de la chaîne"],
+                credit: ["Written by"],
+                source: ["Story by KTM"],
+                author: ["JCG"],
+                draft_date: ["2022-02-22"]
+            });
+
+            assert.propEqual(parser.parseTitlePage("    " + titlePage), {
+                title: [ "Présentation de la chaîne"],
+                credit: ["Written by"],
+                source: ["Story by KTM"],
+                author: ["JCG"],
+                draft_date: ["2022-02-22"]
+            });
+
+        });
+
 // =============== HEADING ====================================================
         test.each( "isHeading", HEADING, ( assert, [data] ) => {
             assert.true(parser.isHeading(data), `${data} is Heading`);

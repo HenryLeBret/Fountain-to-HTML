@@ -13,45 +13,6 @@ class FountainParser {
         this.contents = document.getElementById(domId);
     }
 
-    parseTitlePage(line) {
-
-        var obj = [];
-        var lastKey = '';
-        var parts = line.split(/\r?\n/);
-
-        for (var i = 0; i < parts.length; i++) {
-
-            if (parts[i].length <= 1) { continue; } // No key value paris here
-
-            if (parts[i].indexOf(':') !== -1) {
-
-                // Get key
-                var key = parts[i].split(':')[0].trim().toLowerCase().replace(' ', '_');
-                lastKey = key; // Store new key
-                if (!obj[lastKey]) { obj[lastKey] = ''; } // Create key
-
-                // Value on next line
-                if (parts[i].split(':').length > 1) {
-                    var val = parts[i].split(':')[1].trim();
-                    if (val.length <= 1) { continue; }
-                    if (obj[lastKey].length > 0) { obj[lastKey] += '<br />'; }
-                    obj[lastKey] += val;
-                }
-
-            }
-
-            // Only the value on this line
-            else {
-                if (parts[i].trim().length <= 1) { continue; }
-                if (obj[lastKey].length > 0) { obj[lastKey] += '<br />'; }
-                obj[lastKey] += parts[i].trim();
-            }
-
-        }
-
-        return obj;
-    }
-
     addCharacter(name, lines, words) {
         if (this.characters.hasOwnProperty(name)) {
               this.characters[name].dialogs++;
@@ -80,6 +41,7 @@ class FountainParser {
 
         var lines = this.clearBoneyard(this.contents.value).split(/\r?\n\r?\n/); // Get content
         if (lines.length <= 1) { return; }
+        var titlePageSeen = false;
 
         for (var i = 0; i < lines.length; i++) {
 
@@ -93,9 +55,10 @@ class FountainParser {
                 this.addLocation(o['location']);
             }
 
-            else if (this.isTitlePage(line)) {
+            else if (!titlePageSeen && this.isTitlePage(line)) {
                 var o = this.parseTitlePage(line);
                 this.view.createTitlePage(o['title'], o['credit'], o['author'], o['draft_date'], o['contact']);
+                titlePageSeen = true;
             }
 
             else if (this.isCentered(line)) {
@@ -126,6 +89,49 @@ class FountainParser {
 
         updateStats();
         this.view.createStatsSection(this.locations, this.characters);
+    }
+
+    isTitlePage(str) {
+        if (/\w+\s*:\s*\S+/.test(str)) { return true; }
+        return false;
+    }
+
+    parseTitlePage(line) {
+        var obj = {};
+        var lastKey = '';
+        var parts = line.split(/\r?\n/);
+
+        for (var i = 0; i < parts.length; i++) {
+
+            if (parts[i].length <= 1) { continue; } // No key value paris here
+
+            if (parts[i].indexOf(':') !== -1) {
+
+                // Get key
+                var key = parts[i].split(':')[0].trim().toLowerCase().replace(' ', '_');
+                lastKey = key; // Store new key
+                if (!obj[lastKey]) { obj[lastKey] = []; } // Create key
+
+                // Value on next line
+                if (parts[i].split(':').length > 1) {
+                    var val = parts[i].split(':')[1].trim();
+                    if (val.length <= 1) { continue; }
+                    // if (obj[lastKey].length > 0) { obj[lastKey] += '<br />'; }
+                    obj[lastKey].push(val);
+                }
+
+            }
+
+            // Only the value on this line
+            else {
+                if (parts[i].trim().length <= 1) { continue; }
+                // if (obj[lastKey].length > 0) { obj[lastKey] += '<br />'; }
+                obj[lastKey].push(parts[i].trim());
+            }
+
+        }
+
+        return obj;
     }
 
     isHeading(str) {
@@ -243,11 +249,6 @@ class FountainParser {
         return '';
       });
       return str;
-    }
-
-    isTitlePage(str) {
-        if (str.slice(0, 6) == 'Title:') { return true; }
-        return false;
     }
 
 };
