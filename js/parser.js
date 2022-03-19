@@ -5,39 +5,15 @@ class FountainParser {
     static DIALOG_RE = /^\s*(?:@(.*?\p{Ll}.*?)|([\p{Lu}\d_\s]+))(\s*\([^)]*\))?\s*(\^)?$/u;
     static TRANSITION_RE = /(?:^\s*>\s*(.+)\s*(?<!<)$)|(?:^(?!\.)\s*([^\p{Ll}]*TO:))$/u;
 
-    characters = {};
-    locations = [];
-
-    constructor(domId, display) {
+    constructor(domId, display, stats) {
         this.view = display;
         this.contents = document.getElementById(domId);
-    }
-
-    addCharacter(name, lines, words) {
-        if (this.characters.hasOwnProperty(name)) {
-              this.characters[name].dialogs++;
-              this.characters[name].lines += lines;
-              this.characters[name].words += words;
-          } else {
-              this.characters[name] = { dialogs: 1, lines: lines, words: words };
-          }
-    }
-
-    addLocation(locations) {
-        for (const l of locations) {
-            let local = l.trim().toUpperCase();
-            if (this.locations.hasOwnProperty(local)) {
-                this.locations[local]++;
-            } else {
-                this.locations[local] = 1;
-            }
-        }
+        this.stats = stats;
     }
 
     parseFountain() {
 
-        this.characters = {}; // Clear characters
-        this.locations = []; // Clear locations
+        this.stats.reset();
 
         var lines = this.clearBoneyard(this.contents.value).split(/\r?\n\r?\n/); // Get content
         if (lines.length <= 1) { return; }
@@ -52,7 +28,7 @@ class FountainParser {
             if (this.isHeading(line)) {
                 var o = this.parseHeading(line);
                 this.view.addBlock('heading', this.escape(o['line']));
-                this.addLocation(o['location']);
+                this.stats.addLocation(o['location']);
             }
 
             else if (!titlePageSeen && this.isTitlePage(line)) {
@@ -71,7 +47,7 @@ class FountainParser {
                 this.view.addBlock(o['block'], o['dialog'].map(l => this.emphasis(this.escape(l))).join('<br />').trim());
                 var trueDialog = o['dialog'].filter(l => ! l.trim().match( /^\(.*\)$/) );
                 var words = trueDialog.join(' ').split(/[^\p{L}\p{N}]+/u);
-                this.addCharacter(o['character'], trueDialog.length, words.length);
+                this.stats.addCharacter(o['character'], trueDialog.length, words.length);
             }
 
             else if (this.isTransition(line)) {
@@ -88,7 +64,7 @@ class FountainParser {
         }
 
         updateStats();
-        this.view.createStatsSection(this.locations, this.characters);
+        this.stats.createStatsSection();
     }
 
     isTitlePage(str) {
