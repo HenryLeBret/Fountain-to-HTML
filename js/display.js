@@ -3,7 +3,7 @@ class DisplayScript {
     static WORD_PER_MINUTE = 150;
 
     constructor(locationStats, characterStats) {
-        // this.location_stats = document.getElementById(locationStats);
+        this.location_stats = document.getElementById(locationStats);
         this.character_stats = document.getElementById(characterStats);
     }
 
@@ -25,7 +25,7 @@ class DisplayScript {
      */
     clearScript() {
         document.getElementById('scenario').innerHTML = '';
-        // this.location_stats.innerHTML = '';
+        this.location_stats.innerHTML = '';
         this.character_stats.innerHTML = '';
         this.createTitlePage('Title page', 'Written by', 'You', '', ''); // There must be an empty page
     }
@@ -137,9 +137,9 @@ class DisplayScript {
      * @param {associative array} locations : .
      */
     createStatsSection(locations, characters) {
-        // Object.entries(locations).forEach(([l, sc]) => {
-        //     this.location_stats.innerHTML += '<li>' + l + ' <b>(' + sc + ')</b></li>';
-        // });
+        Object.entries(locations).forEach(([l, sc]) => {
+            this.location_stats.innerHTML += '<li>' + l + ' (<b>' + sc + '</b>)</li>';
+        });
         Object.entries(characters).forEach(([c, sc]) => {
             var minTime = Math.round(sc.words / DisplayScript.WORD_PER_MINUTE * 60);
             this.character_stats.innerHTML += `<li>${c} (<b>${sc.dialogs}</b> tirades; <b>${sc.lines}</b> lignes; <b>${sc.words}</b> mots; ${minTime} s @${DisplayScript.WORD_PER_MINUTE}WPM)</li>`;
@@ -148,7 +148,7 @@ class DisplayScript {
     }
 
     toggleVisibility(id) {
-        [/*this.location_stats,*/ this.character_stats].forEach((item, i) => {
+        [this.location_stats, this.character_stats].forEach((item, i) => {
             if (id == item.id) {
                 item.style.display = ((item.style.display!='none') ? 'none' : 'block');
             } else {

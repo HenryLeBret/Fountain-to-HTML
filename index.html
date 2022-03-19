@@ -16,7 +16,8 @@
             <button id="mobile-menu" onclick="toggleMenu();">Menu</button>
             <nav>
                 <section>
-                    <span id="location-count" title="The amount of different locations used in this script.">0</span> locations,
+                    <span onclick="toggleVisibility('location-stats');">
+                        <span id="location-count" title="The amount of different locations used in this script.">0</span> locations,</span>
                     <span onclick="toggleVisibility('caracter-stats');">
                         <span id="dialog-count" title="The amount of people who have dialog in this script.">0</span> speakers,</span>
                     <span id="word-count" title="The amount of words in the script.">0</span> words,
@@ -141,7 +142,7 @@
                 document.getElementById('scene-count').innerText = document.getElementsByClassName('heading').length;
                 document.getElementById('word-count').innerText = document.getElementById('fountain').value.trim().split(/\s+/).length;
                 document.getElementById('dialog-count').innerText = Object.keys(p.characters).length;
-                document.getElementById('location-count').innerText = p.locations.length;
+                document.getElementById('location-count').innerText = Object.keys(p.locations).length;
             }
 
             function toggleMenu() {
@@ -157,7 +158,7 @@
             function toggleVisibility(id) {
                 d.toggleVisibility(id);
             }
-            
+
             document.querySelector('header nav').addEventListener('click', function() {
                 toggleMenu();
             });

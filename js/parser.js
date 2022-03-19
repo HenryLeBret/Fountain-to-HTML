@@ -52,14 +52,6 @@ class FountainParser {
         return obj;
     }
 
-    addToArrayUnique(arr, str) {
-        str = str.trim().toUpperCase();
-        for (var i = 0; i < arr.length; i++) {
-            if (arr[i] == str) { return; } // Already present
-        }
-        arr.push(str);
-    }
-
     addCharacter(name, lines, words) {
         if (this.characters.hasOwnProperty(name)) {
               this.characters[name].dialogs++;
@@ -70,13 +62,21 @@ class FountainParser {
           }
     }
 
-    addLocation(location) {
-        this.addToArrayUnique(this.locations, location);
+    addLocation(locations) {
+        for (const l of locations) {
+            let local = l.trim().toUpperCase();
+            if (this.locations.hasOwnProperty(local)) {
+                this.locations[local]++;
+            } else {
+                this.locations[local] = 1;
+            }
+        }
     }
 
     parseFountain() {
 
         this.characters = {}; // Clear characters
+        this.locations = []; // Clear locations
 
         var lines = this.clearBoneyard(this.contents.value).split(/\r?\n\r?\n/); // Get content
         if (lines.length <= 1) { return; }
@@ -112,7 +112,7 @@ class FountainParser {
             }
 
             else if (this.isTransition(line)) {
-                line = parseTransition(line);
+                line = this.parseTransition(line);
                 this.view.addBlock('transition', line);
             }
 
