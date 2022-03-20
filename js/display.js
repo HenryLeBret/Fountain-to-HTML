@@ -58,9 +58,6 @@ class DisplayScript {
                                 + '<div><div>' + lastCue + '</div><div>' + content + '</div></div></div>';
         }
 
-        else if (focused) {
-            lastPage.innerHTML += '<span class="'+type+'">'+content+'</span>';
-        }
         else {
             lastPage.innerHTML += '<span class="'+type+'">'+content+'</span>';
         }
@@ -83,12 +80,7 @@ class DisplayScript {
 
             // Add to the new page
             lastPage = document.getElementById('scenario').lastChild; // The newly generated page
-            if (focused) {
-                lastPage.innerHTML += '<span class="'+type+'">'+content+'</span>';
-            }
-            else {
-                lastPage.innerHTML += '<span class="'+type+'">'+content+'</span>';
-            }
+            lastPage.innerHTML += '<span class="'+type+'">'+content+'</span>';
 
         }
 
