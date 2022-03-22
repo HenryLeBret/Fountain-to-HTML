@@ -1,0 +1,18 @@
+#soustitre li {
+    padding-left: 20px;
+    padding-top: 10px;
+    padding-bottom: 0px;
+    display: list-item;
+    color: white;
+    font-size: 12pt;
+    background-color: #000000BB;
+    /* -webkit-text-stroke: 1pt black; */
+}
+
+#soustitre .horsChamp {
+    color: yellow;
+}
+
+#soustitre .bruit {
+    color: red;
+}

@@ -2,14 +2,16 @@ class FountainParser {
 
     static HEADING_RE = /^(int\.?\s+|int\.?\/ext\.?\s+|ext\.?\/int\.?\s+|i\/e\s+|est\.?\s+|ext\.?\s+|\.\s*)(.*?)\s*(?:#([\w\d\.\-]+)#)?\s*$/i;
     // Character name forced with @ or in upper case
-    static DIALOG_RE = /^\s*(?:@(.*?\p{Ll}.*?)|([\p{Lu}\d_\s]+))(\s*\([^)]*\))?\s*(\^)?$/u;
+    static DIALOG_RE = /^\s*(?:@(.*?\p{Ll}.*?)|([\p{Lu}\d_\s]+))(?:\s*\(([^)]*)\))?\s*(\^)?$/u;
     static TRANSITION_RE = /(?:^\s*>\s*(.+)\s*(?<!<)$)|(?:^(?!\.)\s*([^\p{Ll}]*TO:))$/u;
 
-    constructor(domId, display, stats) {
+    constructor(domId, display, stats, st) {
         this.view = display;
         this.contents = document.getElementById(domId);
         this.stats = stats;
+        this.st = st;
     }
+
 
     parseFountain() {
 
@@ -48,6 +50,7 @@ class FountainParser {
                 var trueDialog = o['dialog'].filter(l => ! l.trim().match( /^\(.*\)$/) );
                 var words = trueDialog.join(' ').split(/[^\p{L}\p{N}]+/u);
                 this.stats.addCharacter(o['character'], trueDialog.length, words.length);
+                this.st.addDialog(o);
             }
 
             else if (this.isTransition(line)) {
@@ -59,6 +62,7 @@ class FountainParser {
                 if (line[0] == '!') { line = line.slice(1); } // Remove leading !
                 var action = this.clearNote(line).split(/\n/g);
                 this.view.addBlock('action', action.map(l => (l.trim() == '') ? '' : this.emphasis(this.escape(l))).join('<br />'));
+                this.st.addAction(action);
             }
 
         }
@@ -140,11 +144,12 @@ class FountainParser {
     }
 
     parseDialog(line) {
-        var obj = [];
+        var obj = {};
         var parts = line.split('\n');
         const found = parts[0].match(FountainParser.DIALOG_RE);
         obj['character'] = found[1] ? found[1].trim() : found[2].trim();
-        obj['character-cue'] = obj['character'] + (found[3] ? ' ' + found[3] : '');
+        obj['parenthesis'] = found[3];
+        obj['character-cue'] = obj['character'] + (found[3] ? ' (' + found[3] + ')' : '');
         obj['dialog'] = parts.slice(1).map(e => e.trim()).filter(e => e.length > 0);
         obj['block'] =  found[4] ? 'dual-dialog' : 'dialog';
         return obj;

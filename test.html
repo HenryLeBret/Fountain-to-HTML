@@ -46,46 +46,46 @@
 
         let DIALOG = [
             [ "STEEL\nThe man's a myth!",
-                { character: "STEEL", 'character-cue': "STEEL", block: "dialog", dialog: [
+                { character: "STEEL", 'character-cue': "STEEL", block: "dialog", "parenthesis": undefined, dialog: [
                     "The man's a myth!" ] } ],
             [ "MOM (O. S.)\nLuke! Come down for supper!",
-                { character: "MOM", 'character-cue': "MOM (O. S.)", block: "dialog", dialog: [
+                { character: "MOM", 'character-cue': "MOM (O. S.)", block: "dialog", "parenthesis": 'O. S.', dialog: [
                     "Luke! Come down for supper!" ] } ],
             [ "HANS (on the radio)\nWhat was it you said?",
-                { character: "HANS", 'character-cue': "HANS (on the radio)", block: "dialog", dialog: [
+                { character: "HANS", 'character-cue': "HANS (on the radio)", block: "dialog", "parenthesis": 'on the radio', dialog: [
                     "What was it you said?" ] } ],
             [ "@McCLANE\nYippie ki-yay! I got my lower-case C back!",
-                { character: "McCLANE", 'character-cue': "McCLANE", block: "dialog", dialog: [
+                { character: "McCLANE", 'character-cue': "McCLANE", block: "dialog", "parenthesis": undefined, dialog: [
                     "Yippie ki-yay! I got my lower-case C back!" ] } ],
             [ "SANBORN\nA good 'ole boy. You know, loves the Army, blood runs green. Country boy. Seems solid.",
-                { character: "SANBORN", 'character-cue': "SANBORN", block: "dialog", dialog: [
+                { character: "SANBORN", 'character-cue': "SANBORN", block: "dialog", "parenthesis": undefined, dialog: [
                     "A good 'ole boy. You know, loves the Army, blood runs green. Country boy. Seems solid." ] } ],
             [ "\tDAN\nThen let's retire them. \n_Permanently_.",
-                { character: "DAN", 'character-cue': "DAN", block: "dialog", dialog: [
+                { character: "DAN", 'character-cue': "DAN", block: "dialog", "parenthesis": undefined, dialog: [
                     "Then let's retire them.", "_Permanently_." ] } ],
             [ "STEEL\n(starting the engine)\nSo much for retirement!",
-                { character: "STEEL", 'character-cue': "STEEL", block: "dialog", dialog: [
+                { character: "STEEL", 'character-cue': "STEEL", block: "dialog", "parenthesis": undefined, dialog: [
                     "(starting the engine)", "So much for retirement!" ] } ],
             [ "STEEL ^\nScrew retirement.",
-                { character: "STEEL", 'character-cue': "STEEL", block: "dual-dialog", dialog: [
+                { character: "STEEL", 'character-cue': "STEEL", block: "dual-dialog", "parenthesis": undefined, dialog: [
                     "Screw retirement." ] } ],
             [ "WILLY WONKA\n~Willy Wonka! The amazing chocolatier!",
-                { character: "WILLY WONKA", 'character-cue': "WILLY WONKA", block: "dialog", dialog: [
+                { character: "WILLY WONKA", 'character-cue': "WILLY WONKA", block: "dialog", "parenthesis": undefined, dialog: [
                     "~Willy Wonka! The amazing chocolatier!" ] } ],
             [ "     JYCR   (H.C.)\n   (énervé)\n  HC !\n",
-                { character: "JYCR", 'character-cue': "JYCR (H.C.)", block: "dialog", dialog: [
+                { character: "JYCR", 'character-cue': "JYCR (H.C.)", block: "dialog", "parenthesis": 'H.C.', dialog: [
                     "(énervé)", "HC !" ] } ],
             [ "HC\n(chuchote)\n…Longue vie et prospérité…[[SRC:humour:Spock]]",
-                { character: "HC", 'character-cue': "HC", block: "dialog", dialog: [
+                { character: "HC", 'character-cue': "HC", block: "dialog", "parenthesis": undefined, dialog: [
                     "(chuchote)", "…Longue vie et prospérité…[[SRC:humour:Spock]]" ] } ],
             [ "JYCR\nNon, parce que je ne ferais pas le signe stupide avec la main.\n[[SRC:humour:Spock]]\n",
-                { character: "JYCR", 'character-cue': "JYCR", block: "dialog", dialog: [
+                { character: "JYCR", 'character-cue': "JYCR", block: "dialog", "parenthesis": undefined, dialog: [
                     "Non, parce que je ne ferais pas le signe stupide avec la main.", "[[SRC:humour:Spock]]" ] } ],
             [ "JYCR (CONT’D)\nsauf les oiseaux.",
-                { character: "JYCR", 'character-cue': "JYCR (CONT’D)", block: "dialog", dialog: [
+                { character: "JYCR", 'character-cue': "JYCR (CONT’D)", block: "dialog", "parenthesis": 'CONT’D', dialog: [
                     "sauf les oiseaux." ] } ],
             [ "R2D2\nbibop",
-                { character: "R2D2", 'character-cue': "R2D2", block: "dialog", dialog: [
+                { character: "R2D2", 'character-cue': "R2D2", block: "dialog", "parenthesis": undefined, dialog: [
                     "bibop" ] } ],
             // [ "",
             //     { character: "", 'character-cue': "", block: "dialog", dialog: [
@@ -198,6 +198,7 @@
             assert.equal(actual['character-cue'], expected['character-cue'], `${actual['character-cue']} is correct`);
             assert.deepEqual(actual.dialog, expected.dialog, `${actual.dialog} is correct`);
             assert.equal(actual.block, expected.block, `${actual.block} is correct`);
+            assert.propEqual(actual, expected);
         });
 
 // =============== TRANSITION =================================================
