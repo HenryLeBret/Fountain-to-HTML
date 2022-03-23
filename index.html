@@ -66,9 +66,10 @@
         <script type="text/javascript" src="js/FileSaver.js"></script><!-- github.com/eligrey/FileSaver.js -->
         <script type="text/javascript">
 
+            var soustitre = document.getElementById('soustitre');
             var s = new Stats('location-stats', 'caracter-stats');
             var d = new DisplayScript();
-            var p = new FountainParser('fountain', d, s, new SousTitre());
+            var p = new FountainParser('fountain', d, s, new SousTitre(soustitre));
             var sp = new Screenplay('fountain', p, d);
 
             // Upload Fountain script

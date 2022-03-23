@@ -16,6 +16,7 @@ class FountainParser {
     parseFountain() {
 
         this.stats.reset();
+        this.st.reset();
 
         var lines = this.clearBoneyard(this.contents.value).split(/\r?\n\r?\n/); // Get content
         if (lines.length <= 1) { return; }

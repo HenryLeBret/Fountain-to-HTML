@@ -6,6 +6,9 @@
     color: white;
     font-size: 12pt;
     background-color: #000000BB;
+    /* text-shadow: -1pt 0 black, 0  1pt black,
+                  1pt 0 black, 0 -1pt black; */
+    /* text-shadow: black 0.1em 0.1em 0.1em; */
     /* -webkit-text-stroke: 1pt black; */
 }
 

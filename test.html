@@ -7,6 +7,7 @@
   <div id="qunit-fixture"></div>
   <script src="https://code.jquery.com/qunit/qunit-2.18.0.js"></script>
   <script type="text/javascript" src="js/parser.js"></script>
+  <script type="text/javascript" src="js/st.js"></script>
 
   <script>
 
@@ -179,7 +180,7 @@
             assert.equal(actual.sceneNumber, expected.sceneNumber, `${actual.sceneNumber} is sceneNumber`);
         });
 
-        // =============== DIALOG ====================================================
+// =============== DIALOG ====================================================
         test.each( "isDialog", DIALOG, ( assert, [data] ) => {
             assert.true(parser.isDialog(data), `${data} is Heading`);
         });
@@ -217,5 +218,41 @@
         });
 
     });
+
+    QUnit.module( "SousTitre", hooks => {
+        let ulElement, st;
+
+        hooks.beforeEach( () => {
+            ulElement = document.createElement("ul");
+            st = new SousTitre(ulElement);
+        });
+
+        test( "reset", (assert) => {
+            ulElement.innerHTML = "<li>TOTO</li>";
+            st.reset();
+            assert.equal(ulElement.innerHTML, "");
+        });
+
+        test("addAction", (assert) => {
+            st.addAction(["basic action."]);
+            assert.equal(ulElement.innerHTML, "");
+            st.addAction(["Action avec un `bruit`"]);
+            assert.equal(ulElement.innerHTML, '<li class="bruit">bruit</li>\n');
+            st.addAction(["Action `avec` un bruit.", "`soustitre` qui désigne un son."]);
+            assert.equal(ulElement.innerHTML, '<li class="bruit">bruit</li>\n<li class="bruit">avec</li>\n<li class="bruit">soustitre</li>\n');
+        });
+
+        test("addDialog", (assert) => {
+            st.addDialog({character: 'FOO', parenthesis: undefined, dialog: [
+                '(bépo)', 'salut', '(zozo)'
+            ]});
+            assert.equal(ulElement.innerHTML, '<li>- salut</li>\n');
+            st.addDialog({character: 'FOO', parenthesis: undefined, dialog: [
+                'Une ligne vraiment très très très longue'
+            ]});
+            assert.equal(ulElement.innerHTML, '<li>- salut</li>\n<li>Une ligne vraiment très très très</li>\n<li>longue</li>\n');
+        });
+    });
+
   </script>
 </body>
