@@ -1,9 +1,12 @@
 class SousTitre {
 
     static PREFIX_CHANGEMENT_DE_PERSONNAGE = '- ';
-    static HORS_CHAMP_TAG = 'H.C.';
-    static OFF_TAG = 'OFF';
     static LONGUEUR_LINE = 36;
+
+    static HORS_CHAMP_RE = /^H\.C\.$/;
+    static OFF_RE = /^OFF$/i;
+    static MUSIC_RE = /^~(.+)$/;
+    static ETRANGERE_RE = /``(.+?)``/g;
 
     constructor(htmlElement) {
         this.soustitre = htmlElement;
@@ -18,21 +21,45 @@ class SousTitre {
     addDialog(dialog) {
         var prefix = dialog['character'] != this.lastCharacter ? SousTitre.PREFIX_CHANGEMENT_DE_PERSONNAGE : '';
         this.lastCharacter = dialog['character'];
-        var clazz = dialog['parenthesis'] == SousTitre.HORS_CHAMP_TAG ? ' class="horsChamp"' : '';
+        var clazz = '';
+        if (SousTitre.HORS_CHAMP_RE.test(dialog['parenthesis'])) { clazz = ' class="horsChamp"'; }
+        if (SousTitre.OFF_RE.test(dialog['parenthesis'])) { clazz = ' class="off"'; }
+
         dialog['dialog'].forEach((item, i) => {
-            if (!item.trim().match( /^\(.*\)$/)) {
-                var d = this.emphasis(item.trim());
+            item = item.trim();
+            if (!item.match( /^\(.*\)$/)) {
+                if (SousTitre.MUSIC_RE.test(item)) {
+                    clazz = ' class="music"';
+                    item = item.slice(0);
+                }
+                var d = this.emphasis(item);
                 var line = '';
-                d.split(/\s+/).forEach((item, i) => {
-                    if ((line.length + item.length +1) > SousTitre.LONGUEUR_LINE) {
-                        this.soustitre.innerHTML += `<li${clazz}>${prefix}${line}</li>\n`;
-                        prefix = '';
-                        line = '';
-                    } else if (line.length > 0) {
-                        line += ' ';
+                var etrangere = false
+                var len = prefix.length;
+                // var arr = d.split(/\s+|(?<=``)(?=[^`])|(?<=[^`])(?=``)/);
+                var arr = d.split(/(?<=\p{L})(?=\P{L})|(?<=\P{L})(?=\p{L})|(?<=``)(?=[^`])|(?<=[^`])(?=``)/u);
+                arr.forEach((item, i) => {
+                    if (item == '``') {
+                        line += etrangere ? '</span>' : '<span class="etrangere">';
+                        etrangere = !etrangere;
+                    } else {
+                        if ((len + item.length +1) > SousTitre.LONGUEUR_LINE) {
+                            // line = line.replace(/( <span class="etrangere">) /, '$1');
+                            line = line.trim();
+                            this.soustitre.innerHTML += `<li${clazz}>${prefix}${line}</li>\n`;
+                            prefix = '';
+                            line = '';
+                            len = 0;
+                        // } else if (line.length > 0) {
+                        //     line += ' ';
+                        //     len++;
+                        }
+                        line += item;
+                        len += item.length;
                     }
-                    line += item;
                 });
+                // line = line.replace(/( <span class="etrangere">) /g, '$1');
+                line = line.trim();
                 this.soustitre.innerHTML += `<li${clazz}>${prefix}${line}</li>\n`;
                 prefix = '';
             }
@@ -48,6 +75,8 @@ class SousTitre {
     }
 
     emphasis(str) {
+        str = str.replace(SousTitre.MUSIC_RE, '$1');
+        // str = str.replace(SousTitre.ETRANGERE_RE, '<span class="etrangere">$1</span>');
         str = str.replace(/\*\*\*([^\*]*)\*\*\*/g, '$1');
         str = str.replace(/\*\*([^\*]*)\*\*/g, '$1');
         str = str.replace(/\*([^\*]*)\*/g, '$1');

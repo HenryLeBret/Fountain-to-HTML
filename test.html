@@ -247,10 +247,50 @@
                 '(bépo)', 'salut', '(zozo)'
             ]});
             assert.equal(ulElement.innerHTML, '<li>- salut</li>\n');
-            st.addDialog({character: 'FOO', parenthesis: undefined, dialog: [
+
+        });
+
+        test("addDialog longue ligne", (assert) => {
+            st.addDialog({character: '', parenthesis: undefined, dialog: [
                 'Une ligne vraiment très très très longue'
             ]});
-            assert.equal(ulElement.innerHTML, '<li>- salut</li>\n<li>Une ligne vraiment très très très</li>\n<li>longue</li>\n');
+            assert.equal(ulElement.innerHTML, '<li>Une ligne vraiment très très très</li>\n<li>longue</li>\n');
+
+        });
+
+        test("addDialog Hors champ", (assert) => {
+            st.addDialog({character: '', parenthesis: 'H.C.', dialog: [
+                'Une ligne pas très longue'
+            ]});
+            assert.equal(ulElement.innerHTML, '<li class="horsChamp">Une ligne pas très longue</li>\n');
+        });
+
+        test("addDialog off", (assert) => {
+            st.addDialog({character: '', parenthesis: 'off', dialog: [
+                'Une ligne pas très longue'
+            ]});
+            assert.equal(ulElement.innerHTML, '<li class="off">Une ligne pas très longue</li>\n');
+        });
+
+        test("addDialog music", (assert) => {
+            st.addDialog({character: '', parenthesis: undefined, dialog: [
+                '~Une ligne chantée'
+            ]});
+            assert.equal(ulElement.innerHTML, '<li class="music">Une ligne chantée</li>\n');
+
+        });
+
+        test("addDialog étrangère", (assert) => {
+            st.addDialog({character: '', parenthesis: undefined, dialog: [
+                'Ne pas confondre ``Homo`` et Homo.'
+            ]});
+            assert.equal(ulElement.innerHTML, '<li>Ne pas confondre <span class="etrangere">Homo</span> et Homo.</li>\n');
+
+            ulElement.innerHTML = '';
+            st.addDialog({character: '', parenthesis: undefined, dialog: [
+                '``Homo`` et ``Homo georgicus``.'
+            ]});
+            assert.equal(ulElement.innerHTML, '<li><span class="etrangere">Homo</span> et <span class="etrangere">Homo georgicus</span>.</li>\n');
         });
     });
 
