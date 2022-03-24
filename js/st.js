@@ -44,21 +44,16 @@ class SousTitre {
                         etrangere = !etrangere;
                     } else {
                         if ((len + item.length +1) > SousTitre.LONGUEUR_LINE) {
-                            // line = line.replace(/( <span class="etrangere">) /, '$1');
                             line = line.trim();
                             this.soustitre.innerHTML += `<li${clazz}>${prefix}${line}</li>\n`;
                             prefix = '';
                             line = '';
                             len = 0;
-                        // } else if (line.length > 0) {
-                        //     line += ' ';
-                        //     len++;
                         }
                         line += item;
                         len += item.length;
                     }
                 });
-                // line = line.replace(/( <span class="etrangere">) /g, '$1');
                 line = line.trim();
                 this.soustitre.innerHTML += `<li${clazz}>${prefix}${line}</li>\n`;
                 prefix = '';
