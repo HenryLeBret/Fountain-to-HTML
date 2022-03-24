@@ -188,18 +188,10 @@ class FountainParser {
     }
 
     emphasis(str) {
-        str = str.replace(/\*\*\*[^\*]*\*\*\*/g, function(s) { // Bold & italics
-            return '<span class="bold italic">' + s.slice(3, -3).trim() + '</span>';
-        });
-        str = str.replace(/\*\*[^\*]*\*\*/g, function(s) { // Bold
-            return '<span class="bold">' + s.slice(2, -2).trim() + '</span>';
-        });
-        str = str.replace(/\*[^\*]*\*/g, function(s) { // Italic
-            return '<span class="italic">' + s.slice(1, -1).trim() + '</span>';
-        });
-        str = str.replace(/_[^\_]*_/g, function(s) { // Underline
-            return '<span class="underline">' + s.slice(1, -1).trim() + '</span>';
-        });
+        str = str.replace(/\*\*\*[^\*]*\*\*\*/g, '<span class="bold italic">$1</span>');  // Bold & italics
+        str = str.replace(/\*\*([^\*]*)\*\*/g, '<span class="bold">$1</span>');  // Bold
+        str = str.replace(/\*([^\*]*)\*/g, '<span class="italic">$1</span>');  // Italic
+        str = str.replace(/_([^\_]*)_/g, '<span class="underline">$1</span>'); // Underline
         return str;
     }
 

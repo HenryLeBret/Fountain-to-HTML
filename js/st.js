@@ -36,7 +36,6 @@ class SousTitre {
                 var line = '';
                 var etrangere = false
                 var len = prefix.length;
-                // var arr = d.split(/\s+|(?<=``)(?=[^`])|(?<=[^`])(?=``)/);
                 var arr = d.split(/(?<=\p{L})(?=\P{L})|(?<=\P{L})(?=\p{L})|(?<=``)(?=[^`])|(?<=[^`])(?=``)/u);
                 arr.forEach((item, i) => {
                     if (item == '``') {
