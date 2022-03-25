@@ -21,6 +21,18 @@ class DisplayScript {
         this.createTitlePage(['Title page'], ['Written by'], ['You'], [''], ['']); // There must be an empty page
     }
 
+    addCentered(line) {
+        this.addBlock('center', this.emphasis(line));
+    }
+
+    addDialog(block, dialog) {
+        this.addBlock(block, dialog.map(l => this.emphasis(l)).join('<br />').trim());
+    }
+
+    addAction(action) {
+        this.addBlock('action', action.map(l => this.emphasis(l)).join('<br />'));
+    }
+
     /**
      * Append a new block to the scenario.
      * @param {string} type : The type of the block.
@@ -101,10 +113,10 @@ class DisplayScript {
         author = (author === undefined) ? 'Written by' : author[0];
         date = (date === undefined) ? 'today' : date[0];
         contact = (contact === undefined) ? '' : contact.join('<br/>');
-        updateTitle(title.join(' '));
+        updateTitle(this.clearEmphasis(title.join(' ')));
         var titlePage = '<li class="fly-page paper a4-portrait" id="1">';
         titlePage += '<span class="lines-25"></span>';
-        titlePage += '<span class="script-title" title="The title of this script.">'+title.join('<br/>')+'</span>';
+        titlePage += '<span class="script-title" title="The title of this script.">'+ title.map(t => this.emphasis(t)).join('<br/>')+'</span>';
         titlePage += '<span class="lines-2"></span>';
         titlePage += '<span class="credit">'+credit+'</span>';
         titlePage += '<span class="author" title="The full name of the writer of this script.">'+author+'</span>';
@@ -115,4 +127,23 @@ class DisplayScript {
         this.newPage();
     }
 
+    emphasis(str) {
+        str = str.replace(/\*\*\*[^\*]*\*\*\*/g, '<span class="bold italic">$1</span>');  // Bold & italics
+        str = str.replace(/\*\*([^\*]*)\*\*/g, '<span class="bold">$1</span>');  // Bold
+        str = str.replace(/\*([^\*]*)\*/g, '<span class="italic">$1</span>');  // Italic
+        str = str.replace(/_([^\_]*)_/g, '<span class="underline">$1</span>'); // Underline
+        str = str.replace(/``([^\`]*)``/g, '$1');
+        str = str.replace(/([^\`]*)`/g, '$1');
+        return str;
+    }
+
+    clearEmphasis(str) {
+        str = str.replace(SousTitre.MUSIC_RE, '$1');
+        // str = str.replace(SousTitre.ETRANGERE_RE, '<span class="etrangere">$1</span>');
+        str = str.replace(/\*\*\*([^\*]*)\*\*\*/g, '$1');
+        str = str.replace(/\*\*([^\*]*)\*\*/g, '$1');
+        str = str.replace(/\*([^\*]*)\*/g, '$1');
+        str = str.replace(/_([^\_]*)_/g, '$1');
+        return str;
+    }
 }

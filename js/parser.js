@@ -41,13 +41,14 @@ class FountainParser {
             }
 
             else if (this.isCentered(line)) {
-                this.view.addBlock('center', this.emphasis(this.escape(this.centerText(line))));
+                this.view.addCentered(this.escape(this.centerText(line)));
             }
 
             else if (this.isDialog(line)) {
                 var o = this.parseDialog(this.clearNote(line));
                 this.view.addBlock('character-cue', o['character-cue']);
-                this.view.addBlock(o['block'], o['dialog'].map(l => this.emphasis(this.escape(l))).join('<br />').trim());
+                this.view.addDialog(o['block'], o['dialog'].map(l => this.escape(l)));
+                // this.view.addBlock(o['block'], o['dialog'].map(l => this.emphasis(this.escape(l))).join('<br />').trim());
                 var trueDialog = o['dialog'].filter(l => ! l.trim().match( /^\(.*\)$/) );
                 var words = trueDialog.join(' ').split(/[^\p{L}\p{N}]+/u);
                 this.stats.addCharacter(o['character'], trueDialog.length, words.length);
@@ -62,7 +63,7 @@ class FountainParser {
             else {
                 if (line[0] == '!') { line = line.slice(1); } // Remove leading !
                 var action = this.clearNote(line).split(/\n/g);
-                this.view.addBlock('action', action.map(l => (l.trim() == '') ? '' : this.emphasis(this.escape(l))).join('<br />'));
+                this.view.addAction(action.map(l => (l.trim() == '') ? '' : this.escape(l)));
                 this.st.addAction(action);
             }
 
@@ -184,14 +185,6 @@ class FountainParser {
 
     centerText(str) {
         str = str.replace(/^\s*>\s*(.+)\s*<\s*$/g, '$1'); // Center
-        return str;
-    }
-
-    emphasis(str) {
-        str = str.replace(/\*\*\*[^\*]*\*\*\*/g, '<span class="bold italic">$1</span>');  // Bold & italics
-        str = str.replace(/\*\*([^\*]*)\*\*/g, '<span class="bold">$1</span>');  // Bold
-        str = str.replace(/\*([^\*]*)\*/g, '<span class="italic">$1</span>');  // Italic
-        str = str.replace(/_([^\_]*)_/g, '<span class="underline">$1</span>'); // Underline
         return str;
     }
 
