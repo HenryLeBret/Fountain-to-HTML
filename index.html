@@ -25,6 +25,7 @@
                     <span id="scene-count" title="The amount of scenes in the script.">0</span> scenes,
                     <span id="page-count" title="The amount of pages, including the title page.">0</span> pages
                 </section>
+                <button onclick="toggleMode(this)">Night</button>
                 <button id="change-view">View</button>
                 <div id="upload-file-wrapper">
                     <button>Upload</button>
@@ -166,6 +167,16 @@
 
             function toggleVisibility(id) {
                 s.toggleVisibility(id);
+            }
+
+            function toggleMode(button) {
+                var element = document.body; //document.getElementById('fountain');
+                element.classList.toggle("dark-mode");
+                if (button.innerText == 'Day') {
+                    button.innerText = 'Night';
+                } else {
+                    button.innerText = 'Day'
+                };
             }
 
             document.querySelector('header nav').addEventListener('click', function() {

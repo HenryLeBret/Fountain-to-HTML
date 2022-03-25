@@ -16,6 +16,10 @@
     font-weight: normal;
     text-align: left;
 }
+.dark-mode .paper {
+    background-color: #2c3645;
+    outline-color: black;
+}
 .paper:first-of-type {
     margin: 0 auto 50px auto;
 }
