@@ -25,7 +25,7 @@
                     <span id="scene-count" title="The amount of scenes in the script.">0</span> scenes,
                     <span id="page-count" title="The amount of pages, including the title page.">0</span> pages
                 </section>
-                <button onclick="toggleMode(this)">Night</button>
+                <button id="toggleMode" onclick="toggleMode(this)">Night</button>
                 <button id="change-view">View</button>
                 <div id="upload-file-wrapper">
                     <button>Upload</button>
@@ -187,6 +187,11 @@
                 return 'Have you saved everything? Click download to store the script on your pc.';
             };
 
+            const urlParams = new URLSearchParams(window.location.search);
+            const mode = urlParams.get('mode');
+            if (mode == 'night') {
+                toggleMode(document.getElementById('toggleMode'));
+            }
         </script>
 
     </body>
