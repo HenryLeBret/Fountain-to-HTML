@@ -37,3 +37,27 @@
     clear: none;
     width: auto;
 }
+
+.dark-mode #soustitre li {
+    filter: brightness(85%);
+}
+
+.dark-mode #soustitre .horsChamp {
+    filter: brightness(85%);
+}
+
+.dark-mode #soustitre .bruit {
+    filter: brightness(85%);
+}
+
+.dark-mode #soustitre .off {
+    filter: brightness(85%);
+}
+
+.dark-mode #soustitre .music {
+    filter: brightness(85%);
+}
+
+.dark-mode #soustitre span.etrangere {
+    filter: brightness(85%);
+}
