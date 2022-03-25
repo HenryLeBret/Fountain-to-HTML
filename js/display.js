@@ -30,7 +30,7 @@ class DisplayScript {
     }
 
     addAction(action) {
-        this.addBlock('action', action.map(l => this.emphasis(l)).join('<br />'));
+        this.addBlock('action', action.map(l => this.emphasis(l)).join(''));
     }
 
     /**

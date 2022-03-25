@@ -40,10 +40,6 @@ class FountainParser {
                 titlePageSeen = true;
             }
 
-            else if (this.isCentered(line)) {
-                this.view.addCentered(this.escape(this.centerText(line)));
-            }
-
             else if (this.isDialog(line)) {
                 var o = this.parseDialog(this.clearNote(line));
                 this.view.addBlock('character-cue', o['character-cue']);
@@ -63,7 +59,18 @@ class FountainParser {
             else {
                 if (line[0] == '!') { line = line.slice(1); } // Remove leading !
                 var action = this.clearNote(line).split(/\n/g);
-                this.view.addAction(action.map(l => (l.trim() == '') ? '' : this.escape(l)));
+                this.view.addAction(action.map(item => {
+                    var l = item.trim();
+                    if (this.isCentered(l)) {
+                        var content = this.escape(this.centerText(l));
+                        return '<span class="center">'+content+'</span>\n'
+                    } else if (l == '') {
+                        return '<br />';
+                    } else {
+                        return this.escape(item) + '<br />';
+                    }
+                }));
+
                 this.st.addAction(action);
             }
 
