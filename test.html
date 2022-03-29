@@ -100,9 +100,36 @@
             [ "> Burn to White.", "Burn to White." ],
         ];
 
+        let ACTION = [
+            [ "Sur un fond étoilé,", [{type:'text', text:'Sur un fond étoilé,'}] ],
+            [ "La caméra bouge\n    HC recule pour regarder la caméra.", [
+                { type:'text', text:'La caméra bouge' },
+                {type:'break'},
+                { type:'text', text:'    HC recule pour regarder la caméra.' } ]],
+            [ '**Carton**: "Précédemment"', [{type:'text', text:'**Carton**: "Précédemment"'}] ],
+            [ '**Carton**:\n        >"*Prehistobrik présente: *<\n        >*Sa chaîne*"<', [
+                {type:'text', text:'**Carton**:'},
+                {type:'break'},
+                {type:'center', text:'"*Prehistobrik présente: *'},
+                {type:'break'},
+                {type:'center', text:'*Sa chaîne*"'} ]],
+            [ "[[Durée: 3s]]\nLa caméra bouge", [
+                { type:'note', domain: "Durée", text:" 3s" },
+                { type:'break'},
+                { type:'text', text:'La caméra bouge' } ]],
+            [ "Préhistobrick: scène 1, première prise. [[ST SM: Préhistobrick: scène 1, prise 1]]", [
+                {type:'text', text:'Préhistobrick: scène 1, première prise. '},
+                { type:'note', domain: "ST SM", text:" Préhistobrick: scène 1, prise 1" } ]],
+            [ "[[ EL: « ἕν οἶδα ὅτι οὐδὲν οἶδα » FR: « Je ne sais qu'une seule chose, c'est que je ne sais rien. »\n"
+             +"Devise de Socrate.]]", [
+                   { type: "note", domain: " EL",
+                     text: " « ἕν οἶδα ὅτι οὐδὲν οἶδα » FR: « Je ne sais qu'une seule chose, c'est que je ne sais rien. »\nDevise de Socrate." },
+                 ]],
+
+        ];
 
         hooks.beforeEach( () => {
-            parser = new FountainParser(undefined, undefined);
+            parser = new FountainParser(undefined, undefined, undefined, undefined);
         });
 
 // =============== TITLE PAGE =================================================
@@ -202,6 +229,13 @@
             assert.propEqual(actual, expected);
         });
 
+// =============== ACTION =====================================================
+
+        test.each("parseAction", ACTION, (assert, [data, expected] ) => {
+            var actual = parser.parseAction(data);
+            assert.deepEqual(actual, expected);
+        });
+
 // =============== TRANSITION =================================================
         test.each( "isTransition", TRANSITION, ( assert, [data] ) => {
             assert.true(parser.isTransition(data), `${data} is Transition`);
@@ -234,11 +268,12 @@
         });
 
         test("addAction", (assert) => {
-            st.addAction(["basic action."]);
+            st.addAction([{ type: 'text', text:"basic action." }]);
             assert.equal(ulElement.innerHTML, "");
-            st.addAction(["Action avec un `bruit`"]);
+            st.addAction([{ type: 'text', text:"Action avec un `bruit`" }]);
             assert.equal(ulElement.innerHTML, '<li class="bruit">bruit</li>\n');
-            st.addAction(["Action `avec` un bruit.", "`soustitre` qui désigne un son."]);
+            st.addAction([{ type: 'text', text:"Action `avec` un bruit." },
+                          { type: 'text', text:"`soustitre` qui désigne un son." }]);
             assert.equal(ulElement.innerHTML, '<li class="bruit">bruit</li>\n<li class="bruit">avec</li>\n<li class="bruit">soustitre</li>\n');
         });
 
@@ -292,7 +327,9 @@
             ]});
             assert.equal(ulElement.innerHTML, '<li><span class="etrangere">Homo</span> et <span class="etrangere">Homo georgicus</span>.</li>\n');
         });
+
     });
+
 
   </script>
 </body>

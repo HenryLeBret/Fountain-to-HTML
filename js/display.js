@@ -16,21 +16,31 @@ class DisplayScript {
     /**
      * Remove all blocks from the script and place the placeholders.
      */
-    clearScript() {
+    reset() {
         document.getElementById('scenario').innerHTML = '';
         this.createTitlePage(['Title page'], ['Written by'], ['You'], [''], ['']); // There must be an empty page
     }
 
-    addCentered(line) {
-        this.addBlock('center', this.emphasis(line));
+    addHeading(block) {
+        this.addBlock('heading', this.escape(block['line']));
     }
 
     addDialog(block, dialog) {
-        this.addBlock(block, dialog.map(l => this.emphasis(l)).join('<br />').trim());
+        this.addBlock(block, dialog.map(l => this.emphasis(this.escape(l))).join('<br />').trim());
     }
 
     addAction(action) {
-        this.addBlock('action', action.map(l => this.emphasis(l)).join(''));
+        this.addBlock('action', action
+            .filter(l => l.type == 'text' || l.type == 'center')
+            .map(l => {
+                    var t = this.emphasis(this.escape(l.text));
+                    if (l.type == 'center') {
+                        return `<span style='center'>${t}</span>`;
+                    } else {
+                        return t;
+                    }
+                })
+            .join('<br />'));
     }
 
     /**
@@ -145,5 +155,13 @@ class DisplayScript {
         str = str.replace(/\*([^\*]*)\*/g, '$1');
         str = str.replace(/_([^\_]*)_/g, '$1');
         return str;
+    }
+
+    escape(htmlStr) {
+       return htmlStr.replace(/&/g, "&amp;")
+             .replace(/</g, "&lt;")
+             .replace(/>/g, "&gt;")
+             .replace(/"/g, "&quot;")
+             .replace(/'/g, "&#39;");
     }
 }

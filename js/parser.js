@@ -6,15 +6,15 @@ class FountainParser {
     static TRANSITION_RE = /(?:^\s*>\s*(.+)\s*(?<!<)$)|(?:^(?!\.)\s*([^\p{Ll}]*TO:))$/u;
 
     constructor(domId, display, stats, st) {
-        this.view = display;
         this.contents = document.getElementById(domId);
+        this.view = display;
         this.stats = stats;
         this.st = st;
     }
 
 
     parseFountain() {
-
+        this.view.reset();
         this.stats.reset();
         this.st.reset();
 
@@ -30,7 +30,7 @@ class FountainParser {
 
             if (this.isHeading(line)) {
                 var o = this.parseHeading(line);
-                this.view.addBlock('heading', this.escape(o['line']));
+                this.view.addHeading(o);
                 this.stats.addLocation(o['location']);
             }
 
@@ -43,8 +43,7 @@ class FountainParser {
             else if (this.isDialog(line)) {
                 var o = this.parseDialog(this.clearNote(line));
                 this.view.addBlock('character-cue', o['character-cue']);
-                this.view.addDialog(o['block'], o['dialog'].map(l => this.escape(l)));
-                // this.view.addBlock(o['block'], o['dialog'].map(l => this.emphasis(this.escape(l))).join('<br />').trim());
+                this.view.addDialog(o['block'], o['dialog']);
                 var trueDialog = o['dialog'].filter(l => ! l.trim().match( /^\(.*\)$/) );
                 var words = trueDialog.join(' ').split(/[^\p{L}\p{N}]+/u);
                 this.stats.addCharacter(o['character'], trueDialog.length, words.length);
@@ -57,27 +56,43 @@ class FountainParser {
             }
 
             else {
-                if (line[0] == '!') { line = line.slice(1); } // Remove leading !
-                var action = this.clearNote(line).split(/\n/g);
-                this.view.addAction(action.map(item => {
-                    var l = item.trim();
-                    if (this.isCentered(l)) {
-                        var content = this.escape(this.centerText(l));
-                        return '<span class="center">'+content+'</span>\n'
-                    } else if (l == '') {
-                        return '<br />';
-                    } else {
-                        return this.escape(item) + '<br />';
-                    }
-                }));
+                var actions = this.parseAction(line);
 
-                this.st.addAction(action);
+                this.view.addAction(actions);
+                this.st.addAction(actions);
             }
 
         }
 
         updateStats();
         this.stats.createStatsSection();
+    }
+
+    parseAction(line) {
+        if (line[0] == '!') { line = line.slice(1); } // Remove leading !
+
+        var arr = line.split(/(?<=\]\])(?=[^\]])|(?<=[^\[])(?=\[\[)/g);
+        var res = [];
+        arr.forEach((block, i) => {
+            var found = block.match(/^\s*\[\[(?:(.+?):)(.*)\]\]\s*$/us);
+            if (found) {
+                res.push({ type: 'note', domain: found[1], text: found[2] });
+            } else {
+                var action = block.split(/(?<=\n)(?=[^\n])|(?<=[^\n])(?=\n)/g);
+                action.forEach((item, i) => {
+                    if (item == '\n' || item == '') {
+                        res.push({ type: 'break'});
+                    } else if (this.isCentered(item)) {
+                        var content = this.centerText(item);
+                        res.push({ type: 'center', text: content });
+                    } else {
+                        res.push({ type: 'text', text: item});
+                    }
+                });
+            }
+        });
+
+        return res;
     }
 
     isTitlePage(str) {
@@ -201,15 +216,6 @@ class FountainParser {
         str = str.toString().replace(/ +(?= )/g,''); // Remove double spaces
         str = str.toString().trim(); // Remove leading and trailing spaces
         return str;
-    }
-
-    escape(htmlStr) {
-       return htmlStr.replace(/&/g, "&amp;")
-             .replace(/</g, "&lt;")
-             .replace(/>/g, "&gt;")
-             .replace(/"/g, "&quot;")
-             .replace(/'/g, "&#39;");
-
     }
 
     clearBoneyard(str) {

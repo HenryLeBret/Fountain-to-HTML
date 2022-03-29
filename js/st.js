@@ -61,8 +61,8 @@ class SousTitre {
     }
 
     addAction(action) {
-        action.filter(line => /`.+`/.test(line)).forEach((item, i) => {
-            var bruit = item.match(/`([^``]+)`/);
+        action.filter(line => /`.+`/.test(line.text)).forEach((item, i) => {
+            var bruit = item.text.match(/`([^``]+)`/);
             this.soustitre.innerHTML += `<li class="bruit">${bruit[1]}</li>\n`;
         });
 

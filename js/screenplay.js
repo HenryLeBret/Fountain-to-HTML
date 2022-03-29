@@ -29,7 +29,6 @@ class Screenplay {
         async function startParsing() {
             clearInterval(t.delayTime); // Only parses one time, if the user does not type after the last parse, no new call will be launched
             t.delayTime = setTimeout(function() {
-                t.view.clearScript();
                 t.parser.parseFountain(); // Wait before parsing, start parsing when the user isn't typing
             }, t.typeTimeout);
         }
