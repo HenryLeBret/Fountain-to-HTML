@@ -10,13 +10,12 @@ class FountainParser {
         this.view = display;
         this.stats = stats;
         this.st = st;
+        this.plugins = [ this.view, this.stats, this.st ];
     }
 
 
     parseFountain() {
-        this.view.reset();
-        this.stats.reset();
-        this.st.reset();
+        this.plugins.forEach(plugin => plugin.reset());
 
         var lines = this.clearBoneyard(this.contents.value).split(/\r?\n\r?\n/); // Get content
         if (lines.length <= 1) { return; }
@@ -29,9 +28,8 @@ class FountainParser {
             if (this.isSection(line) || this.isSynopsis(line)) { continue; } // Skip Section and Synopsis
 
             if (this.isHeading(line)) {
-                var o = this.parseHeading(line);
-                this.view.addHeading(o);
-                this.stats.addLocation(o['location']);
+                var head = this.parseHeading(line);
+                this.plugins.forEach(plugin => plugin.addHeading(head));
             }
 
             else if (!titlePageSeen && this.isTitlePage(line)) {
@@ -52,14 +50,12 @@ class FountainParser {
 
             else if (this.isTransition(line)) {
                 line = this.parseTransition(line);
-                this.view.addBlock('transition', line);
+                this.plugins.forEach(plugin => plugin.addTransition(line));
             }
 
             else {
                 var actions = this.parseAction(line);
-
-                this.view.addAction(actions);
-                this.st.addAction(actions);
+                this.plugins.forEach(plugin => plugin.addAction(actions));
             }
 
         }

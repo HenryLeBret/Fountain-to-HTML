@@ -29,8 +29,8 @@ class Stats {
           }
     }
 
-    addLocation(locations) {
-        for (const l of locations) {
+    addHeading(head) {
+        for (const l of head['location']) {
             let local = l.trim().toUpperCase();
             if (this.locations.hasOwnProperty(local)) {
                 this.locations[local]++;
@@ -38,6 +38,14 @@ class Stats {
                 this.locations[local] = 1;
             }
         }
+    }
+
+    addAction(_action) {
+        // Nothing
+    }
+
+    addTransition(_transition) {
+        // Nothing
     }
 
     getCharacterCount() {

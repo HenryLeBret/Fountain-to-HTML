@@ -21,8 +21,12 @@ class DisplayScript {
         this.createTitlePage(['Title page'], ['Written by'], ['You'], [''], ['']); // There must be an empty page
     }
 
-    addHeading(block) {
-        this.addBlock('heading', this.escape(block['line']));
+    addHeading(head) {
+        this.addBlock('heading', this.escape(head['line']));
+    }
+
+    addTransition(transition) {
+        this.addBlock('transition', transition);
     }
 
     addDialog(block, dialog) {

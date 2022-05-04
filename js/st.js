@@ -18,6 +18,10 @@ class SousTitre {
         this.lastCharacter = '';
     }
 
+    addHeading(_head) {
+        // Nothing
+    }
+
     addDialog(dialog) {
         var prefix = dialog['character'] != this.lastCharacter ? SousTitre.PREFIX_CHANGEMENT_DE_PERSONNAGE : '';
         this.lastCharacter = dialog['character'];
@@ -66,6 +70,10 @@ class SousTitre {
             this.soustitre.innerHTML += `<li class="bruit">${bruit[1]}</li>\n`;
         });
 
+    }
+
+    addTransition(_transition) {
+        // Nothing
     }
 
     emphasis(str) {
