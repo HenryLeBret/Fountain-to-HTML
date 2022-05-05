@@ -4,6 +4,7 @@ class FountainParser {
     // Character name forced with @ or in upper case
     static DIALOG_RE = /^\s*(?:@(.*?\p{Ll}.*?)|([\p{Lu}\d_\s]+))(?:\s*\(([^)]*)\))?\s*(\^)?$/u;
     static TRANSITION_RE = /(?:^\s*>\s*(.+)\s*(?<!<)$)|(?:^(?!\.)\s*([^\p{Ll}]*TO:))$/u;
+    static CENTER_RE = /^\s*>\s*(.+?)\s*<\s*$/;
 
     constructor(domId, display, stats, st) {
         this.contents = document.getElementById(domId);
@@ -197,13 +198,11 @@ class FountainParser {
     }
 
     isCentered(str) {
-        str = str.trim();
-        return str[0] == '>' && str.slice(-1) == '<';
+        return FountainParser.CENTER_RE.test(str);
     }
 
     centerText(str) {
-        str = str.replace(/^\s*>\s*(.+)\s*<\s*$/g, '$1'); // Center
-        return str;
+        return str.replace(FountainParser.CENTER_RE, '$1');
     }
 
     clearStr(str) {

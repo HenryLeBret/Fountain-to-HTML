@@ -39,12 +39,12 @@ class DisplayScript {
             .map(l => {
                     var t = this.emphasis(this.escape(l.text));
                     if (l.type == 'center') {
-                        return `<span style='center'>${t}</span>`;
+                        return `<span class='center'>${t}</span>`;
                     } else {
-                        return t;
+                        return t + '<br />';
                     }
                 })
-            .join('<br />'));
+            .join(''));
     }
 
     /**
